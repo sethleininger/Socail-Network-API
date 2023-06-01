@@ -6,7 +6,7 @@ module.exports = {
     //  get all users
     async getUsers(req, res) {
         try {
-            const users = await User.find();
+            const users = await User.find().populate('thoughts');
 
             const userObj = {
                 users,
@@ -81,25 +81,20 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-
     async createFriend(req, res) {
-        try {
-            const friend = await User.findOne( {_id: req.params.friendId});
+    try {
+        const userFriend = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $push: { friends: req.params.friendId } },
+            { new: true }
+        ).populate('thoughts').populate('friends');
 
-            const userFriend = await User.findOneAndUpdate( 
-                {_id: req.body.userId },
-                { $push: { friend: friend._id }},
-                { new: true }, 
-            );
-            
-            res.json({ message: 'Friend created within user!'});
-            res.json(userFriend);
-
-        } catch (err) {
-            console.log(err);
-            res.status(500).json(err);
-        }
-    },
+        res.json({ message: 'Friend created within user!', userFriend });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+},
     async deleteFriend(req, res) {
         try {
             const friend = await User.findOneAndRemove({ _id: req.params.friendId });

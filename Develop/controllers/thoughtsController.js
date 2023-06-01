@@ -26,18 +26,18 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    async createThought(req, res) {
+    async createThoughts(req, res) {
         try {
             const thought = await Thoughts.create(req.body);
             
 
             const user = await User.findOneAndUpdate(
                 { _id: req.body.userId },
-                { $push: { thought: thought._id }},
+                { $push: { thoughts: thought._id }},
                 { new: true }, 
             ) 
 
-            res.json(user);
+            res.json(thought);
         } catch (err) {
             console.log(err);
             return res.status(500).json(err);
@@ -71,6 +71,54 @@ module.exports = {
 
             res.json(thought);
         } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+    async createReaction(req, res) {
+        try {
+            const { thoughtId } = req.params;
+            const { reactionBody, username } = req.body; 
+
+            const thought = await Thoughts.findOneAndUpdate(
+                { _id: thoughtId },
+                { $push: { 
+                    reactions: { reactionBody, username }
+                 },
+                 $inc: {
+                    reaction: 1
+                 }
+                 },
+                { new: true}
+            );
+
+            if (!thought) {
+                return res.status(404).json({ message: 'No thought with that id'});
+            }
+
+        res.json(thought);
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+    async deleteReaction(req, res) {
+        try {
+            const { thoughtId, reactionId } = req.params;
+
+            const thought = await Thoughts.findOneAndUpdate(
+                { _id: thoughtId },
+                { $pull: { reactions: { _id: reactionId } } },
+                { new: true }
+            );
+
+            if (!thought) {
+                return res.status(404).json({ message: 'No thought with that id' });
+            }
+
+        res.json(thought);
+        } catch (err) {
+            console.log(err);
             res.status(500).json(err);
         }
     }

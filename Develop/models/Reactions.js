@@ -7,7 +7,7 @@ const reactionsSchema = new Schema(
                 // HELP is this right?
             {
                 type: Schema.Types.ObjectId,
-                ref: 'newReaction',
+                ref: 'reactions',
                 default: function() {
                     return new Schema.Types.ObjectId(); 
                 }, 
@@ -49,6 +49,6 @@ reactionsSchema.virtual('count').get(function () {
     return this.reactionCount.length;
 });
 
-// const Reactions = model('reactions', reactionsSchema);
 
-module.exports = reactionSchema;
+
+module.exports = reactionsSchema;
