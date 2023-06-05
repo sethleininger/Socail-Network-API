@@ -1,18 +1,17 @@
-const { Schema } = require('mongoose');
+const { Schema, Types } = require('mongoose');
 
 const reactionsSchema = new Schema(
     {
         reactionId : {
-            type: [
+
                 // HELP is this right?
-            {
+            
                 type: Schema.Types.ObjectId,
-                ref: 'reactions',
+                ref: 'reactionId',
                 default: function() {
-                    return new Schema.Types.ObjectId(); 
-                }, 
-            },
-            ],
+                    return new Types.ObjectId(); 
+                 },
+ 
         },
         reactionBody: {
             type: String,

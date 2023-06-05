@@ -104,11 +104,9 @@ module.exports = {
     },
     async deleteReaction(req, res) {
         try {
-            const { thoughtId, reactionId } = req.params;
-
             const thought = await Thoughts.findOneAndUpdate(
-                { _id: thoughtId },
-                { $pull: { reactions: { _id: reactionId } } },
+                { _id: req.params.thoughtId },
+                { $pull: { reactions: { reactionId: req.body.reactionId } } },
                 { new: true }
             );
 
